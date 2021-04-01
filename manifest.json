@@ -6,6 +6,8 @@
     "scripts": ["event.js"]
   },
   "permissions": [
-    "contextMenus"
+    "contextMenus",
+    "cookies",
+    "<all_urls>"
   ]
 }

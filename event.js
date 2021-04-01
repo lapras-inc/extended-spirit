@@ -42,10 +42,12 @@ const getProject = async (organizationId, projectId) => {
 }
 
 const createProject = async (organizationId) => {
+  const token = await getAuthToken()
+
   fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects`, {
     method: 'POST',
     headers: {
-      'authorization': 'Bearer default:xxx',
+      'authorization': `Bearer ${token}`,
       'content-type': 'application/json',
     },
     body: JSON.stringify({
@@ -77,3 +79,18 @@ const createProject = async (organizationId) => {
     alert(JSON.stringify(resp));
   }).catch(error => {alert(error.message)});
 };
+
+const getAuthToken = async () => {
+  console.log(chrome.cookies)
+  const cookies = await new Promise((resolve, reject) => {
+    chrome.cookies.getAll({domain: 'app.holaspirit.com', name: 'holaAppToken'},
+        (cookie)=>{
+      resolve(cookie)
+    })
+  })
+  const accessToken =  JSON.parse(decodeURIComponent(cookies[0].value)).access_token
+  console.log(accessToken)
+  return accessToken
+};
+
+
