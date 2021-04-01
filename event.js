@@ -49,9 +49,29 @@ const createProject = async (organizationId) => {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      title: '素晴らしいプロジェクト',
+      title: '〇〇さんオンボーディングチェックリスト',
       circle: '6048015b409fe014e330f40c',
       status: 'current',
+      position: 0,
+      link: 'https://lapras.com/test',
+      role: '6048041257418f4871199f3e',
+      body: '<p>チェックリストのサンプルです</p>',
+      bulkTodoLists: [
+        {
+          name: "グループ1",
+          items: [
+            {name: "チェック１"},
+            {name: "チェック2"}
+          ]
+        },
+        {
+          name: "グループ２",
+          items: [
+            {name: "チェック3", checked: true}
+          ]
+        }
+      ],
+      members: [],
     }),
   }).then(response => response.json()).then((resp) => {
     alert(JSON.stringify(resp));
