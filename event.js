@@ -11,13 +11,15 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // メニューをクリック時に実行
-chrome.contextMenus.onClicked.addListener(item => {
+chrome.contextMenus.onClicked.addListener(async (item) => {
   console.log(item);
   console.log(item.menuItemId);
 
 
   // getProject('6048000e343b9430fb74ecf9', '6048054642d878641215a440')
-  createProject('6048000e343b9430fb74ecf9')
+  const todolists = await getTodolists('6048000e343b9430fb74ecf9', '6048054642d878641215a440');
+
+  await createProject('6048000e343b9430fb74ecf9', todolists);
 
   // fetch('https://app.holaspirit.com/api/me', {
   //   headers: {
@@ -32,16 +34,69 @@ chrome.contextMenus.onClicked.addListener(item => {
 
 
 const getProject = async (organizationId, projectId) => {
-  fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects/${projectId}`, {
+  const response = await fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects/${projectId}`, {
     headers: {
       'authorization': 'Bearer default:xxx'
     }
-  }).then(response => response.json()).then((resp) => {
-    alert(JSON.stringify(resp));
-  }).catch(error => {alert(error.message)});
+  })
+
+
+
+  // fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects/${projectId}`, {
+  //   headers: {
+  //     'authorization': 'Bearer default:xxx'
+  //   }
+  // }).then(response => response.json()).then((resp) => {
+  //   alert(JSON.stringify(resp));
+  // }).catch(error => {alert(error.message)});
 }
 
-const createProject = async (organizationId) => {
+
+const getTodolists = async (organizationId, projectId) => {
+  const token = await getAuthToken()
+
+  const response = await fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects/${projectId}/todolists`, {
+    headers: {
+      'authorization': `Bearer ${token}`,
+      'content-type': 'application/json',
+    },
+  });
+
+  const json = await response.json();
+  alert(JSON.stringify(json));
+
+  return json.data.map((group) => {
+    return {
+      name: group.name,
+      items: group.items.map((itemId) => {
+        const item = json.linked.todolistitems.find((item) => {
+          return item.id === itemId
+        });
+        return {
+          name: item.name
+        }
+      })
+    }
+  });
+
+  // return [
+  //   {
+  //     name: "グループ100",
+  //     items: [
+  //       {name: "チェック１2222"},
+  //       {name: "チェック2"}
+  //     ]
+  //   },
+  //   {
+  //     name: "グループ２00",
+  //     items: [
+  //       {name: "チェック3", checked: true}
+  //     ]
+  //   }
+  // ];
+}
+
+const createProject = async (organizationId, todolists) => {
   const token = await getAuthToken()
 
   fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects`, {
@@ -51,28 +106,14 @@ const createProject = async (organizationId) => {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      title: '〇〇さんオンボーディングチェックリスト',
+      title: 'コピーしたやつです',
       circle: '6048015b409fe014e330f40c',
       status: 'current',
       position: 0,
       link: 'https://lapras.com/test',
       role: '6048041257418f4871199f3e',
       body: '<p>チェックリストのサンプルです</p>',
-      bulkTodoLists: [
-        {
-          name: "グループ1",
-          items: [
-            {name: "チェック１"},
-            {name: "チェック2"}
-          ]
-        },
-        {
-          name: "グループ２",
-          items: [
-            {name: "チェック3", checked: true}
-          ]
-        }
-      ],
+      bulkTodoLists: todolists,
       members: [],
     }),
   }).then(response => response.json()).then((resp) => {
