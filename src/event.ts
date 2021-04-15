@@ -1,9 +1,15 @@
-import { getOrganizationsData, getAccessToken, getProject } from './service';
+import {
+  alertAccessToken,
+  alertOrgsData,
+  alertProjectData,
+  copyProjectWithTodoLists,
+} from './usecase';
 
 enum MenuId {
   GetOrgs,
   GetAccessToken,
   GetProject,
+  CopyProject,
 }
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -26,6 +32,11 @@ chrome.runtime.onInstalled.addListener(() => {
     parentId: 'parent',
     title: 'get project',
   });
+  chrome.contextMenus.create({
+    id: MenuId.CopyProject.toString(),
+    parentId: 'parent',
+    title: 'プロジェクトをコピー',
+  });
 });
 
 // メニューをクリック時に実行
@@ -35,12 +46,13 @@ chrome.contextMenus.onClicked.addListener(async (item) => {
   try {
     switch (item.menuItemId) {
       case MenuId.GetOrgs.toString():
-        alert(await getOrganizationsData());
+        await alertOrgsData();
       case MenuId.GetAccessToken.toString():
-        alert(await getAccessToken());
+        await alertAccessToken();
       case MenuId.GetProject.toString():
-        const accessToken = await getAccessToken();
-        alert(await getProject(accessToken, '6048054642d878641215a440'));
+        await alertProjectData();
+      case MenuId.CopyProject.toString():
+        await copyProjectWithTodoLists();
     }
   } catch (error) {
     alert(error.message);
