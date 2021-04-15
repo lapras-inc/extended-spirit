@@ -36,3 +36,60 @@ export const getAccessToken = async (): Promise<string> => {
   const holaAppTokenEncoded = cookies[0].value;
   return JSON.parse(decodeURIComponent(holaAppTokenEncoded)).access_token;
 };
+
+const getTodolists = async (
+  accessToken: string,
+  organizationId: string,
+  projectId: string
+) => {
+  const response = await fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects/${projectId}/todolists`, {
+    headers: {
+      'authorization': `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+  });
+
+  const json = await response.json();
+  alert(JSON.stringify(json));
+
+  return json.data.map((group: any) => {
+    return {
+      name: group.name,
+      items: group.items.map((itemId: any) => {
+        const item = json.linked.todolistitems.find((item: any) => {
+          return item.id === itemId
+        });
+        return {
+          name: item.name
+        }
+      })
+    }
+  });
+}
+
+const createProject = async (
+  accessToken: string,
+  organizationId: string,
+  todolists: string,
+) => {
+  fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects`, {
+    method: 'POST',
+    headers: {
+      'authorization': `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: 'コピーしたやつです',
+      circle: '6048015b409fe014e330f40c',
+      status: 'current',
+      position: 0,
+      link: 'https://lapras.com/test',
+      role: '6048041257418f4871199f3e',
+      body: '<p>チェックリストのサンプルです</p>',
+      bulkTodoLists: todolists,
+      members: [],
+    }),
+  }).then(response => response.json()).then((resp) => {
+    alert(JSON.stringify(resp));
+  }).catch(error => {alert(error.message)});
+};
