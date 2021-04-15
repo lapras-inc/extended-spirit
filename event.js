@@ -1,12 +1,12 @@
 chrome.runtime.onInstalled.addListener(() => {
   const parent = chrome.contextMenus.create({
     id: 'parent',
-    title: '親メニュー'
+    title: 'extended-spirit'
   });
   chrome.contextMenus.create({
     id: 'child1',
     parentId: 'parent',
-    title: '子メニュー1'
+    title: 'プロジェクトのコピー'
   });
 });
 
@@ -15,19 +15,19 @@ chrome.contextMenus.onClicked.addListener(async (item) => {
   console.log(item);
   console.log(item.menuItemId);
 
+  const projectUrl = prompt('プロジェクトのURLを入れてください（右クリックで「ペースト」を選択）');
 
-  // getProject('6048000e343b9430fb74ecf9', '6048054642d878641215a440')
-  const todolists = await getTodolists('6048000e343b9430fb74ecf9', '6048054642d878641215a440');
+  if (!projectUrl) {
+    return
+  }
 
-  await createProject('6048000e343b9430fb74ecf9', todolists);
-
-  // fetch('https://app.holaspirit.com/api/me', {
-  //   headers: {
-  //     'authorization': 'Bearer default:xxx'
-  //   }
-  // }).then(response => response.json()).then((resp) => {
-  //   alert(JSON.stringify(resp));
-  // });
+  const projectId = new URL(projectUrl).searchParams.get('projectId');
+  if (projectId) {
+    const todolists = await getTodolists('6048000e343b9430fb74ecf9', projectId);
+    await createProject('6048000e343b9430fb74ecf9', todolists);
+  } else {
+    alert('不正なURLです')
+  }
 });
 
 
@@ -63,7 +63,6 @@ const getTodolists = async (organizationId, projectId) => {
   });
 
   const json = await response.json();
-  alert(JSON.stringify(json));
 
   return json.data.map((group) => {
     return {
@@ -117,7 +116,7 @@ const createProject = async (organizationId, todolists) => {
       members: [],
     }),
   }).then(response => response.json()).then((resp) => {
-    alert(JSON.stringify(resp));
+    alert('プロジェクトを作成しました！');
   }).catch(error => {alert(error.message)});
 };
 
