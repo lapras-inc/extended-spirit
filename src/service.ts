@@ -106,6 +106,10 @@ export const createProject = async (
   organizationId: string,
   circle: string,
   role: string,
+  title: string,
+  link: string,
+  body: string,
+  position: number,
   status: string,
   todolists: {
     name: string;
@@ -115,53 +119,22 @@ export const createProject = async (
   }[],
 ): Promise<string> => {
   const client = getHolaspiritHttpClient(accessToken);
-  // const response = await client
-  //   .post(
-  //     `/api/organizations/${organizationId}/projects`,
-  //     JSON.stringify({
-  //       title: 'コピーしたやつです',
-  //       circle,
-  //       status: status,
-  //       position: 0,
-  //       link: 'https://lapras.com/test',
-  //       role,
-  //       body: '<p>チェックリストのサンプルです</p>',
-  //       bulkTodoLists: todolists,
-  //       members: [],
-  //     }),
-  //   )
-  //   .catch((error) => {
-  //     throw Error(`プロジェクトの作成に失敗しました: ${error.message}`);
-  //   });
-  // return JSON.stringify(response);
-  return fetch(
-    `https://app.holaspirit.com/api/organizations/${organizationId}/projects`,
-    {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: 'コピーしたやつです',
-        circle,
-        status,
-        position: 0,
-        link: 'https://lapras.com/test',
-        role,
-        body: '<p>チェックリストのサンプルです</p>',
-        bulkTodoLists: todolists,
-        members: [],
-      }),
-    },
-  )
-    .then((response) => response.json())
-    .then((resp) => {
-      return JSON.stringify(resp);
+  const response = await client
+    .post(`/api/organizations/${organizationId}/projects`, {
+      title,
+      circle,
+      status,
+      position,
+      link,
+      role,
+      body,
+      bulkTodoLists: todolists,
+      members: [],
     })
     .catch((error) => {
-      throw Error(error.message);
+      throw Error(`プロジェクトの作成に失敗しました: ${error.message}`);
     });
+  return JSON.stringify(response);
 };
 
 export const getProjectUrl = (): string => {

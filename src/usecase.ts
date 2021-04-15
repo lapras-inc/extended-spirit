@@ -26,13 +26,17 @@ export const copyProjectWithTodoLists = async (): Promise<void> => {
   const projectId = getProjectId(await getProjectUrl());
   const project = await getProject(accessToken, projectId, ORGANIZATION_ID);
   const todolists = await getTodolists(accessToken, ORGANIZATION_ID, projectId);
-  const response = await createProject(
+  await createProject(
     accessToken,
     ORGANIZATION_ID,
     project.circle,
     project.role,
-    'current',
+    project.title + 'のコピー',
+    project.link,
+    project.body,
+    0,
+    'waiting',
     todolists,
   );
-  alert(response);
+  alert('プロジェクトのコピーを作成しました');
 };
