@@ -47,12 +47,16 @@ chrome.contextMenus.onClicked.addListener(async (item) => {
     switch (item.menuItemId) {
       case MenuId.GetOrgs.toString():
         await alertOrgsData();
+        break;
       case MenuId.GetAccessToken.toString():
         await alertAccessToken();
+        break;
       case MenuId.GetProject.toString():
         await alertProjectData();
+        break;
       case MenuId.CopyProject.toString():
         await copyProjectWithTodoLists();
+        break;
     }
   } catch (error) {
     alert(error.message);
