@@ -17,26 +17,30 @@ chrome.runtime.onInstalled.addListener(() => {
     id: 'parent',
     title: 'holaspirit',
   });
-  chrome.contextMenus.create({
-    id: MenuId.GetOrgs.toString(),
-    parentId: 'parent',
-    title: 'get orgs',
-  });
-  chrome.contextMenus.create({
-    id: MenuId.GetAccessToken.toString(),
-    parentId: 'parent',
-    title: 'get auth token',
-  });
-  chrome.contextMenus.create({
-    id: MenuId.GetProject.toString(),
-    parentId: 'parent',
-    title: 'get project',
-  });
+
   chrome.contextMenus.create({
     id: MenuId.CopyProject.toString(),
     parentId: 'parent',
     title: 'プロジェクトをコピー',
   });
+
+  if (process.env.MODE === 'development') {
+    chrome.contextMenus.create({
+      id: MenuId.GetOrgs.toString(),
+      parentId: 'parent',
+      title: 'get orgs',
+    });
+    chrome.contextMenus.create({
+      id: MenuId.GetAccessToken.toString(),
+      parentId: 'parent',
+      title: 'get auth token',
+    });
+    chrome.contextMenus.create({
+      id: MenuId.GetProject.toString(),
+      parentId: 'parent',
+      title: 'get project',
+    });
+  }
 });
 
 // メニューをクリック時に実行
