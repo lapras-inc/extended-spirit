@@ -1,7 +1,10 @@
 const { EnvironmentPlugin } = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
+const GenerateJsonPlugin = require('generate-json-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
+const isProduction = mode === 'production';
 
 /**
  * @type import("webpack").Configuration
@@ -35,6 +38,19 @@ module.exports = {
           to: './',
         },
       ],
+    }),
+    new GenerateJsonPlugin('manifest.json', {
+      name: `extended-spirit${isProduction ? '' : `(${mode})`}`,
+      version: '1.0',
+      manifest_version: 2,
+      background: {
+        scripts: ['event.js'],
+      },
+      permissions: ['contextMenus', 'cookies', '*://app.holaspirit.com/'],
+    }),
+    new ZipPlugin({
+      path: '..',
+      filename: 'extension.zip',
     }),
   ],
 };
