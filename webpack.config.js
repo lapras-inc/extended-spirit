@@ -1,10 +1,13 @@
+const { EnvironmentPlugin } = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
+
+const mode = process.env.NODE_ENV || 'development';
 
 /**
  * @type import("webpack").Configuration
  */
 module.exports = {
-  mode: process.env.NODE_ENV || 'development',
+  mode,
   devtool: 'inline-source-map',
   entry: {
     event: `${__dirname}/src/event.ts`,
@@ -22,6 +25,9 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   plugins: [
+    new EnvironmentPlugin({
+      MODE: mode,
+    }),
     new CopyPlugin({
       patterns: [
         {
