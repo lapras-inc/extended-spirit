@@ -77,15 +77,15 @@ export const getTodolists = async (
     },
   );
 
-  const json = await response.json();
+  const { data, linked } = await response.json();
   const groupList: {
     name: string;
     items: number[];
-  }[] = json.data;
+  }[] = data;
   const linkedTodoListItems: {
     id: number;
     name: string;
-  }[] = json.linked.todolistitems;
+  }[] = linked?.todolistitems ?? [];
   return groupList.map((group) => {
     return {
       name: group.name,
@@ -94,7 +94,7 @@ export const getTodolists = async (
           return item.id === itemId;
         });
         return {
-          name: item!.name,
+          name: item?.name ?? '',
         };
       }),
     };
@@ -153,4 +153,12 @@ export const getProjectId = (projectUrl: string): string => {
     throw Error('プロジェクトIDが見つかりませんでした');
   }
   return projectId;
+};
+
+export const getOrganizationId = (projectUrl: string): string => {
+  const pathnames = new URL(projectUrl).pathname.split('/');
+  if (pathnames.length < 3) {
+    throw Error('組織IDが見つかりませんでした');
+  }
+  return pathnames[2];
 };
