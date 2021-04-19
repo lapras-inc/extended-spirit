@@ -1,13 +1,13 @@
 import {
   createProject,
   getAccessToken,
+  getOrganizationId,
   getOrganizationsData,
   getProject,
   getProjectId,
   getProjectUrl,
   getTodolists,
 } from './service';
-const ORGANIZATION_ID = '5ca435d054548008ed758c72';
 
 export const alertOrgsData = async (): Promise<void> => {
   alert(await getOrganizationsData());
@@ -16,26 +16,29 @@ export const alertAccessToken = async (): Promise<void> => {
   alert(await getAccessToken());
 };
 export const alertProjectData = async (): Promise<void> => {
+  const projectUrl = getProjectUrl();
   const accessToken = await getAccessToken();
-  alert(
-    await getProject(accessToken, '6048054642d878641215a440', ORGANIZATION_ID),
-  );
+  const projectId = getProjectId(projectUrl);
+  const organizationId = getOrganizationId(projectUrl);
+  alert(await getProject(accessToken, projectId, organizationId));
 };
 export const copyProjectWithTodoLists = async (): Promise<void> => {
+  const projectUrl = getProjectUrl();
   const accessToken = await getAccessToken();
-  const projectId = getProjectId(await getProjectUrl());
-  const project = await getProject(accessToken, projectId, ORGANIZATION_ID);
-  const todolists = await getTodolists(accessToken, ORGANIZATION_ID, projectId);
+  const projectId = getProjectId(projectUrl);
+  const organizationId = getOrganizationId(projectUrl);
+  const project = await getProject(accessToken, projectId, organizationId);
+  const todolists = await getTodolists(accessToken, organizationId, projectId);
   await createProject(
     accessToken,
-    ORGANIZATION_ID,
+    organizationId,
     project.circle,
     project.role,
-    project.title + 'のコピー',
+    `${project.title}のコピー`,
     project.link,
     project.body,
     0,
-    'waiting',
+    project.status,
     todolists,
   );
   alert('プロジェクトのコピーを作成しました');
