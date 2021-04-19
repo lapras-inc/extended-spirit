@@ -30,25 +30,12 @@ chrome.contextMenus.onClicked.addListener(async (item) => {
   }
 });
 
-
-
-
 const getProject = async (organizationId, projectId) => {
   const response = await fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects/${projectId}`, {
     headers: {
       'authorization': 'Bearer default:xxx'
     }
   })
-
-
-
-  // fetch(`https://app.holaspirit.com/api/organizations/${organizationId}/projects/${projectId}`, {
-  //   headers: {
-  //     'authorization': 'Bearer default:xxx'
-  //   }
-  // }).then(response => response.json()).then((resp) => {
-  //   alert(JSON.stringify(resp));
-  // }).catch(error => {alert(error.message)});
 }
 
 
@@ -77,22 +64,6 @@ const getTodolists = async (organizationId, projectId) => {
       })
     }
   });
-
-  // return [
-  //   {
-  //     name: "グループ100",
-  //     items: [
-  //       {name: "チェック１2222"},
-  //       {name: "チェック2"}
-  //     ]
-  //   },
-  //   {
-  //     name: "グループ２00",
-  //     items: [
-  //       {name: "チェック3", checked: true}
-  //     ]
-  //   }
-  // ];
 }
 
 const createProject = async (organizationId, todolists) => {
