@@ -1,5 +1,9 @@
 # extended-spirit
 
+モブプロ生配信ネタとして開発したが、公式でプロジェクトの複製ができるようになったためここに眠る
+
+![](https://user-images.githubusercontent.com/20282867/152282131-dd9c8d9b-023e-4732-b1c9-4b4f22dfb0a2.png)
+
 ## prerequirements
 
 - node
